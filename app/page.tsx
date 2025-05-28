@@ -394,7 +394,8 @@ export default function Home() {
                 <Button variant="outline" size="icon" className="h-9 w-9 rounded-md border-gray-200">
                   <PanelLeftOpen className="h-5 w-5 text-gray-500" />
                 </Button>
-                <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition pointer-events-none z-50 whitespace-nowrap">
+                <div
+                  className="absolute left-1/2 sm:left-[83%] -translate-x-1/2 mt-2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition pointer-events-none z-50 whitespace-nowrap">
                   Open Sidebar
                 </div>
               </div>
@@ -402,7 +403,7 @@ export default function Home() {
                 <Button variant="outline" size="icon" className="h-9 w-9 rounded-md border-gray-200">
                   <SquarePen className="h-5 w-5 text-gray-500" />
                 </Button>
-                <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition pointer-events-none z-50 whitespace-nowrap">
+                <div className="absolute left-1/2 sm:left-[83%] -translate-x-1/2 mt-2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition pointer-events-none z-50 whitespace-nowrap">
                   New chat
                 </div>
               </div>
@@ -651,64 +652,64 @@ export default function Home() {
                     />
                   </div>
 
-                <div className="border-t border-gray-100 px-3 py-2 flex flex-wrap items-center justify-between gap-y-2">
-                  {/* Left Section */}
-                  <div className="flex items-center gap-1 overflow-x-auto max-w-full sm:max-w-[80%] scrollbar-hide">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      ref={fileInputRef}
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
+                  <div className="border-t border-gray-100 px-3 py-2 flex flex-wrap items-center justify-between gap-y-2">
+                    {/* Left Section */}
+                    <div className="flex items-center gap-1 overflow-x-auto max-w-full sm:max-w-[80%] scrollbar-hide">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
 
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 rounded-full flex-shrink-0"
-                      onClick={handleButtonClick}
-                    >
-                      <Plus className="h-4 w-4 text-gray-500" />
-                    </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-full flex-shrink-0"
+                        onClick={handleButtonClick}
+                      >
+                        <Plus className="h-4 w-4 text-gray-500" />
+                      </Button>
 
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSelect("reason")}
-                      className={`h-8 rounded-md text-sm flex items-center gap-1.5 flex-shrink-0 ${selectedType === "reason" ? "text-blue-500" : "text-gray-600"
-                        }`}
-                    >
-                      <Lightbulb className="h-4 w-4" />
-                      <span className="whitespace-nowrap">Reason</span>
-                    </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSelect("reason")}
+                        className={`h-8 rounded-md text-sm flex items-center gap-1.5 flex-shrink-0 ${selectedType === "reason" ? "text-blue-500" : "text-gray-600"
+                          }`}
+                      >
+                        <Lightbulb className="h-4 w-4" />
+                        <span className="whitespace-nowrap">Reason</span>
+                      </Button>
 
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSelect("deep_research")}
-                      className={`h-8 rounded-md text-sm flex items-center gap-1.5 flex-shrink-0 ${selectedType === "deep_research" ? "text-blue-500" : "text-gray-600"
-                        }`}
-                    >
-                      <Search className="h-4 w-4" />
-                      <span className="whitespace-nowrap">Deep research</span>
-                    </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSelect("deep_research")}
+                        className={`h-8 rounded-md text-sm flex items-center gap-1.5 flex-shrink-0 ${selectedType === "deep_research" ? "text-blue-500" : "text-gray-600"
+                          }`}
+                      >
+                        <Search className="h-4 w-4" />
+                        <span className="whitespace-nowrap">Deep research</span>
+                      </Button>
 
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSelect("create_image")}
-                      className={`h-8 rounded-md text-sm flex items-center gap-1.5 flex-shrink-0 ${selectedType === "create_image" ? "text-blue-500" : "text-gray-600"
-                        }`}
-                    >
-                      <ImageIcon className="h-4 w-4" />
-                      <span className="whitespace-nowrap">Create image</span>
-                    </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSelect("create_image")}
+                        className={`h-8 rounded-md text-sm flex items-center gap-1.5 flex-shrink-0 ${selectedType === "create_image" ? "text-blue-500" : "text-gray-600"
+                          }`}
+                      >
+                        <ImageIcon className="h-4 w-4" />
+                        <span className="whitespace-nowrap">Create image</span>
+                      </Button>
+                    </div>
+
+                    {/* Right Section */}
+                    <div className="flex items-center gap-2 hidden sm:flex">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                        <Mic className="h-4 w-4 text-gray-500" />
+                      </Button>
+                    </div>
                   </div>
-
-                  {/* Right Section */}
-                  <div className="flex items-center gap-2 hidden sm:flex">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                      <Mic className="h-4 w-4 text-gray-500" />
-                    </Button>
-                  </div>
-                </div>
                 </div>
               </div>
             </div>
