@@ -395,7 +395,7 @@ export default function Home() {
                   <PanelLeftOpen className="h-5 w-5 text-gray-500" />
                 </Button>
                 <div
-                  className="absolute left-1/2 sm:left-[83%] -translate-x-1/2 mt-2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition pointer-events-none z-50 whitespace-nowrap">
+                  className="absolute left-[83%] -translate-x-1/2 mt-2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition pointer-events-none z-50 whitespace-nowrap">
                   Open Sidebar
                 </div>
               </div>
