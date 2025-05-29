@@ -58,11 +58,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ reply: result.text });
         }
 
-        // 🧠 Reasoning or general chat
+        
         if (!type || type === 'none') {
             console.log("checking type", type)
             const result = await genAI.models.generateContent({
-                model: 'gemini-2.0-flash', // or use 'gemini-1.5-pro' if needed
+                model: 'gemini-2.0-flash', 
                 contents: message,
             });
 
