@@ -141,7 +141,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Project_Nextjs\\openaiclone3\\prisma\\app\\generated\\prisma\\client",
+      "value": "c:\\Project_Nextjs\\openaiclone3\\prisma\\app\\generated\\prisma\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -157,7 +157,7 @@ const config = {
     "previewFeatures": [
       "dataProxy"
     ],
-    "sourceFilePath": "C:\\Project_Nextjs\\openaiclone3\\prisma\\schema.prisma",
+    "sourceFilePath": "c:\\Project_Nextjs\\openaiclone3\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -175,14 +175,14 @@ const config = {
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "fromEnvVar": null,
+        "value": "postgresql://neondb_owner:npg_W3SpFhmAGb7l@ep-still-forest-a110t65t-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider        = \"prisma-client-js\"\n  previewFeatures = [\"dataProxy\"]\n  output          = \"app/generated/prisma/client\"\n  // output   = \"../lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  fullName  String\n  email     String   @unique\n  chats     Json?\n  createdAt DateTime @default(now())\n}\n",
-  "inlineSchemaHash": "be4e523758a6b7f68703c302de8e8b31712a35c85c4f2f54c04d028d43cf1da8",
-  "copyEngine": false
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider        = \"prisma-client-js\"\n  previewFeatures = [\"dataProxy\"]\n  output          = \"app/generated/prisma/client\"\n  // output   = \"../lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = \"postgresql://neondb_owner:npg_W3SpFhmAGb7l@ep-still-forest-a110t65t-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\"\n  // url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  fullName  String\n  email     String   @unique\n  chats     Json?\n  createdAt DateTime @default(now())\n}\n",
+  "inlineSchemaHash": "b585f4ff90fcca7de78b38b6358c15342f2da28a1c2f99f50e657387d66ac83c",
+  "copyEngine": true
 }
 config.dirname = '/'
 
@@ -192,9 +192,7 @@ config.engineWasm = undefined
 config.compilerWasm = undefined
 
 config.injectableEdgeEnv = () => ({
-  parsed: {
-    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
-  }
+  parsed: {}
 })
 
 if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
