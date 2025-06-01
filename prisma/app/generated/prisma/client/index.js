@@ -153,13 +153,11 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
-      },
-      {
-        "fromEnvVar": null,
-        "value": "rhel-openssl-3.0.x"
       }
     ],
-    "previewFeatures": [],
+    "previewFeatures": [
+      "dataProxy"
+    ],
     "sourceFilePath": "C:\\Project_Nextjs\\openaiclone3\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
@@ -183,9 +181,9 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n  output        = \"app/generated/prisma/client\"\n  // output   = \"../lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  fullName  String\n  email     String   @unique\n  chats     Json?\n  createdAt DateTime @default(now())\n}\n",
-  "inlineSchemaHash": "42a3f0064414b9f48c44498cb62e2f61ef52057569f341b0075d988a8018e651",
-  "copyEngine": true
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider        = \"prisma-client-js\"\n  previewFeatures = [\"dataProxy\"]\n  output          = \"app/generated/prisma/client\"\n  // output   = \"../lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  fullName  String\n  email     String   @unique\n  chats     Json?\n  createdAt DateTime @default(now())\n}\n",
+  "inlineSchemaHash": "be4e523758a6b7f68703c302de8e8b31712a35c85c4f2f54c04d028d43cf1da8",
+  "copyEngine": false
 }
 
 const fs = require('fs')
@@ -222,13 +220,3 @@ const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
-// file annotations for bundling tools to include these files
-path.join(__dirname, "query_engine-windows.dll.node");
-path.join(process.cwd(), "prisma/app/generated/prisma/client/query_engine-windows.dll.node")
-
-// file annotations for bundling tools to include these files
-path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
-path.join(process.cwd(), "prisma/app/generated/prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node")
-// file annotations for bundling tools to include these files
-path.join(__dirname, "schema.prisma");
-path.join(process.cwd(), "prisma/app/generated/prisma/client/schema.prisma")
