@@ -36,7 +36,6 @@ import {
   MessageSquare,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { env } from "process";
 
 type Message = {
   role: "user" | "assistant"
@@ -699,7 +698,7 @@ export default function Home() {
                   </div>
 
                   {/* Right Section */}
-                  <div className="flex items-center gap-2 hidden sm:flex">
+                  <div className="items-center gap-2 hidden sm:flex">
                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
                       <Mic className="h-4 w-4 text-gray-500" />
                     </Button>
@@ -868,7 +867,7 @@ export default function Home() {
                     </div>
 
                     {/* Right Section */}
-                    <div className="flex items-center gap-2 hidden sm:flex">
+                    <div className="items-center gap-2 hidden sm:flex">
                       <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
                         <Mic className="h-4 w-4 text-gray-500" />
                       </Button>
@@ -882,7 +881,7 @@ export default function Home() {
       </main>
 
       <footer className="text-center text-xs text-gray-500 py-2 border-t border-gray-100">
-        ChatGPT can make mistakes. Check important info. See Cookie Preferences {process.env.DATABASE_URL}
+        ChatGPT can make mistakes. Check important info. See Cookie Preferences
       </footer>
     </div>
   )
