@@ -2,7 +2,12 @@
 
 import type React from "react"
 
-import { useState, useRef, type KeyboardEvent } from "react"
+import { useState, useEffect, useRef, type KeyboardEvent } from "react"
+import {
+  UserButton,
+  useUser
+} from '@clerk/nextjs'
+import Sidebar from "@/components/Sidebar"; // Adjust path if needed
 import {
   Plus,
   Globe,
@@ -24,6 +29,11 @@ import {
   Volume2,
   Share2,
   MoreVertical,
+  Edit3,
+  Library,
+  Sparkles,
+  X,
+  MessageSquare,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -34,6 +44,11 @@ type Message = {
   isImage?: boolean
   imageUrl?: string
 }
+
+type ChatHistory = {
+  title: string;
+  messages: Message[]
+};
 
 // Simple markdown renderer component
 const MarkdownRenderer = ({ content }: { content: string }) => {
@@ -86,15 +101,166 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
   );
 };
 
-
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState("")
   const [isConversationStarted, setIsConversationStarted] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
   const [selectedType, setSelectedType] = useState<"search" | "reason" | "deep_research" | "create_image" | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const { isSignedIn, user, isLoaded } = useUser();
+  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+  const [dbUser, setDbUser] = useState<any>(null);
+  const [shouldSaveToDB, setShouldSaveToDB] = useState(false);
+  const replyRef = useRef<{ title?: string; index?: number }>({});
+  const titleRef = useRef<string | undefined>(undefined);
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editedTitle, setEditedTitle] = useState<string>("");
+
+  const handleSave = async (oldTitle: string, newTitle: string) => {
+    if (newTitle.trim() && newTitle !== oldTitle) {
+      const email = dbUser.email
+      try {
+        const response = await fetch("/api/user/titleupdate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ Title: oldTitle, newTitle, email }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log("Title updated successfully:", result);
+          if (titleRef.current == oldTitle) {
+            titleRef.current = newTitle
+          }
+          if (result.data.chats) {
+            const chats = Object.entries(result.data.chats).map(([title, messages]) => ({
+              title,
+              messages: messages as Message[],
+            }));
+            console.log("Checking chats", chats)
+            setChatHistory(chats);
+          }
+        } else {
+          console.error("Failed to update title:", result.message || result.error || result);
+        }
+
+      } catch (error) {
+        console.error("Error while updating title:", error);
+      }
+    }
+    setEditingId(null);
+  };
+
+  const Deleteobj = async (Title: String) => {
+    if (Title) {
+      const email = dbUser.email
+      try {
+        const response = await fetch("/api/user/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ Title, email }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log("Title Deleted successfully:", result);
+          if (titleRef.current == Title) {
+            titleRef.current = undefined
+            setIsConversationStarted(false)
+          }
+          if (result.data.chats) {
+            const chats = Object.entries(result.data.chats).map(([title, messages]) => ({
+              title,
+              messages: messages as Message[],
+            }));
+            console.log("Checking chats", chats)
+            setChatHistory(chats);
+          }
+        } else {
+          console.error("Failed to update title:", result.message || result.error || result);
+        }
+      } catch (error) {
+        console.error("Error while updating title:", error);
+      }
+    }
+  }
+
+  // Close menu on outside click
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setActiveMenuId(null);
+      setEditingId(null);
+    };
+    //window.addEventListener("click", handleClickOutside);
+    return () => window.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const syncUser = async () => {
+      if (!isLoaded || !isSignedIn || !user) return;
+
+      const fullName = user.fullName;
+      const email = user.emailAddresses[0]?.emailAddress;
+
+      try {
+        const res = await fetch('/api/user/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullName, email }),
+        });
+
+        const result = await res.json();
+        console.log('DB User:', result);
+        setDbUser(result);
+
+        if (result.chats) {
+          const chats = Object.entries(result.chats).map(([title, messages]) => ({
+            title,
+            messages: messages as Message[],
+          }));
+          console.log("Checking chats", chats)
+          setChatHistory(chats);
+
+        }
+      } catch (error) {
+        console.error('Failed to sync user', error);
+      }
+    };
+
+    syncUser();
+  }, [isLoaded, isSignedIn, user]);
+
+  useEffect(() => {
+    const saveToDB = async () => {
+      console.log("replyRef.current.title", replyRef.current.title)
+      if (shouldSaveToDB && replyRef.current.title && replyRef.current.index !== undefined) {
+        await SendMessageToDB(replyRef.current.title, replyRef.current.index, dbUser.email);
+        setShouldSaveToDB(false); 
+      }
+    };
+
+    saveToDB();
+  }, [shouldSaveToDB]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      setActiveMenuId(null);
+    };
+
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+
 
   const handleButtonClick = () => {
     fileInputRef.current?.click()
@@ -127,10 +293,52 @@ export default function Home() {
     }
   }
 
+  const SendMessageToDB = async (
+    Title: string,
+    val: number,
+    email: string
+  ): Promise<void> => {
+    console.log("Title:", Title);
+    console.log("Messages:", messages);
+    console.log("Val:", val);
+    console.log("Email:", email)
+
+    try {
+      const response = await fetch("/api/user/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ Title, messages, check: val === 1 ? true : false, email }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to save message");
+      }
+
+      console.log("Message saved successfully:", data);
+      if (val === 1) {
+        if (data.chats) {
+          const chats = Object.entries(data.chats).map(([title, messages]) => ({
+            title,
+            messages: messages as Message[],
+          }));
+          console.log("Updated chat history:", chats);
+          setChatHistory(chats);
+
+        }
+      }
+    } catch (err) {
+      console.error("Error saving message:", err);
+    }
+
+  };
+
   const sendMessage = async () => {
     if (!inputValue.trim()) return
 
-    // Add user message
+    
     const userMessage: Message = {
       role: "user",
       content: inputValue,
@@ -140,17 +348,25 @@ export default function Home() {
       }),
     }
 
-    // Update messages with user message and set loading state
+    
     setMessages((prevMessages) => [...prevMessages, userMessage])
+
+    let i: number = 0;
+
+    if (!isConversationStarted) {
+      i = 1;
+      if (!titleRef.current) {
+        titleRef.current = inputValue; 
+      }
+    }
+
     setIsConversationStarted(true)
 
     setSelectedType(null);
 
-    // Store input value before clearing it
     const userInput = inputValue
     setInputValue("")
 
-    // Set loading state
     const loadingMessage: Message = {
       role: "assistant",
       content: "...",
@@ -159,10 +375,11 @@ export default function Home() {
 
     setMessages((prevMessages) => [...prevMessages, loadingMessage])
 
+    console.log("messages", messages)
+    console.log("Check Db user", dbUser.email)
     try {
 
       if (selectedImage) {
-        // Clear selected image after sending
         setSelectedImage(null);
 
         const base64Data = await fetch(selectedImage)
@@ -181,7 +398,6 @@ export default function Home() {
               })
           );
 
-        // Send to your new endpoint
         const response = await fetch("/api/chat/image-upload", {
           method: "POST",
           headers: {
@@ -232,18 +448,23 @@ export default function Home() {
             return msg;
           })
         );
+        replyRef.current = {
+          title: titleRef.current,
+          index: i,
+        };
+
+        setShouldSaveToDB(true);
         return;
       }
 
-      // Call the API with the correct parameters for Gemini
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: userInput, // Using 'message' instead of 'prompt' to match the API
-          type: selectedType, // Default type
+          message: userInput, 
+          type: selectedType,
         }),
       })
 
@@ -285,6 +506,13 @@ export default function Home() {
           return msg;
         })
       );
+      replyRef.current = {
+        title: titleRef.current,
+        index: i,
+      };
+
+      
+      setShouldSaveToDB(true);
     } catch (error) {
       console.error("Error calling API:", error)
       setApiError(error instanceof Error ? error.message : "Unknown error occurred")
@@ -300,16 +528,35 @@ export default function Home() {
     }
   }
 
+  if (!dbUser) return;
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
+      
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        chatHistory={chatHistory}
+        setMessages={setMessages}
+        setIsConversationStarted={setIsConversationStarted}
+        titleRef={titleRef}
+        activeMenuId={activeMenuId}
+        setActiveMenuId={setActiveMenuId}
+        editingId={editingId}
+        setEditingId={setEditingId}
+        editedTitle={editedTitle}
+        setEditedTitle={setEditedTitle}
+        handleSave={handleSave}
+        Deleteobj={Deleteobj}
+      />
+
       <header className="border-b border-gray-200 px-4 py-2">
         <div className="w-full px-0">
           <div className="flex items-center justify-between gap-y-2">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="relative group">
-                <Button variant="outline" size="icon" className="h-9 w-9 rounded-md border-gray-200">
+                <Button variant="outline" size="icon" className="h-9 w-9 rounded-md border-gray-200" onClick={() => setIsSidebarOpen(true)}>
                   <PanelLeftOpen className="h-5 w-5 text-gray-500" />
                 </Button>
                 <div
@@ -318,7 +565,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative group">
-                <Button variant="outline" size="icon" className="h-9 w-9 rounded-md border-gray-200">
+                <Button variant="outline" size="icon" className="h-9 w-9 rounded-md border-gray-200" onClick={() => { setMessages([]); setIsConversationStarted(false); titleRef.current = undefined; }}>
                   <SquarePen className="h-5 w-5 text-gray-500" />
                 </Button>
                 <div className="absolute left-1/2 sm:left-[83%] -translate-x-1/2 mt-2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition pointer-events-none z-50 whitespace-nowrap">
@@ -344,7 +591,8 @@ export default function Home() {
                 </Button>
               )}
               <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                <img src="/assets/unnamed.jpg" alt="User Avatar" className="h-full w-full object-cover rounded-full" />
+
+                <UserButton />
               </div>
             </div>
           </div>
@@ -367,9 +615,6 @@ export default function Home() {
         {!isConversationStarted ? (
           // Initial state - centered heading and input at bottom
           <>
-            {/* <div className="flex-1 flex items-center justify-center">
-              <h1 className="text-3xl font-semibold text-gray-800">What can I help with?</h1>
-            </div> */}
             <h1 className="text-3xl text-gray-800 mb-8">What can I help with?</h1>
             <div className="w-full max-w-3xl mx-auto">
               <div className="relative rounded-2xl border border-gray-200 shadow-sm">
