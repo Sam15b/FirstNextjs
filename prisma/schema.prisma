@@ -6,7 +6,8 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
+  output   = "./generated/client"
+  // output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -21,4 +22,3 @@ model User {
   chats     Json?
   createdAt DateTime @default(now())
 }
-
