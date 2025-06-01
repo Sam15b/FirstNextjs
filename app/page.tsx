@@ -882,7 +882,7 @@ export default function Home() {
       </main>
 
       <footer className="text-center text-xs text-gray-500 py-2 border-t border-gray-100">
-        ChatGPT can make mistakes. Check important info. See Cookie Preferences {env("DATABASE_URL")}
+        ChatGPT can make mistakes. Check important info. See Cookie Preferences {process.env.DATABASE_URL}
       </footer>
     </div>
   )
